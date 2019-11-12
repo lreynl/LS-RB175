@@ -9,9 +9,11 @@ class HelloWorld
       ['200', {"Content-Type" => 'text/html'}, [erb(:index)] ]
     when '/advice'
       some_advice = Advice.new.generate
-      ['200', {"Content-Type" => 'text/html'}, ["<html><body><b><em>#{some_advice}</em></b></body></html>"]]
+      ['200', {"Content-Type" => 'text/html'}, 
+      [erb(:advice, message: some_advice)]
+      ]
     else
-      not_found_text = "<html><body><h4>404 Not Found</h4></body></html>"
+      not_found_text = erb(:not_found)
       [
         '404',
         {"Content-Type" => 'text/html', "Content-Length" => "#{not_found_text.length}"},
@@ -19,14 +21,13 @@ class HelloWorld
       ]
     end
   end
-  #def call(env)
-  #  ['200', {'Content-Type' => 'text/plain'}, ["Hello World!"]]
-  #end
 
   private
 
-  def erb(file_name)
-    template = File.read("views/#{file_name}.erb")
-    ERB.new(template).result
+  def erb(file_name, local = {})
+    b = binding
+    message = local[:message]
+    content = File.read("views/#{file_name}.erb")
+    ERB.new(content).result(b)
   end
 end
