@@ -1,0 +1,11 @@
+<h2 class="content-subhead">Search</h2>
+
+<form action="/search" method="get">
+  <input name="query" value="<%= params[:query] %>">
+  <button type="submit">Search</button>
+</form>
+
+<h2 class="content-subhead">Results for '<%= @query %>'</h2>
+
+<%= make_link_list(@search_results) %>
+
