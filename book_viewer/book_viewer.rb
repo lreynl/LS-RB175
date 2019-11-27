@@ -36,18 +36,16 @@ get "/chapters/:number" do
 end
 
 get "/search" do
-  erb :search
-end
-
-get "/search/:query" do
   @query = params[:query]
-  @search_results = {}
-  (1..@toc.length).to_a.each do |chapter_number|
-    chapter = File.read("data/chp#{number}.txt")
-    @search_results[chapter_number] = @toc[chapter_number - 1] if chapter.include?(@query)
+  @search_results = {}  
+  if params[:query]
+    (1..@toc.length).to_a.each do |chapter_number|
+      chapter = File.read("data/chp#{chapter_number}.txt")
+      @search_results[chapter_number] = @toc[chapter_number - 1] if chapter.include?(@query)
+    end
+
   end
-  
-  erb :search_results
+  erb :search
 end
 
 not_found do
