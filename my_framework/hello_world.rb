@@ -1,8 +1,9 @@
 # hello_world.rb
 
 require_relative 'advice'
+require_relative 'methods'
 
-class HelloWorld
+class HelloWorld < MyMethods
   def call(env)
     case env['REQUEST_PATH']
     when '/'
@@ -26,19 +27,5 @@ class HelloWorld
         not_found_text
       end
     end
-  end
-
-  private
-
-  def erb(file_name, local = {})
-    b = binding
-    message = local[:message]
-    content = File.read("views/#{file_name}.erb")
-    ERB.new(content).result(b)
-  end
-
-  def response(status, headers, body = '')
-    body = yield if block_given?
-    [status, headers, [body]]
   end
 end

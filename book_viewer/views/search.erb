@@ -10,9 +10,20 @@
     <p>Sorry, no matches were found</p>
   <% else %>
     <h2 class="content-subhead">Results for '<%= params[:query]%>'</h2>
-    <ul>   
-      <% @search_results.each_pair do |chapter, chap_title| %>
-        <li><a href="/chapters/<%= chapter %>"><%= chap_title %></a></li>
+    <ul style="margin:0; padding:0;">   
+      <% @search_results.each_pair do |chap_number, title_paragraphs| %>
+        <li>
+          <ul>
+            <%= title_paragraphs.keys[0] %>
+            <% title_paragraphs.values[0].each do |paragraph| %>
+              <li>
+                <a href="/chapters/<%= chap_number %>">
+                  <%= bold(paragraph, params[:query]) %>
+                </a>
+              </li>
+            <% end %>
+          </ul>
+        </li>
       <% end %>
     </ul>
   <% end %>

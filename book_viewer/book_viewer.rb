@@ -20,6 +20,10 @@ helpers do
     end
     "<ul>" + links_array.join + "</ul>"
   end
+
+  def bold(paragraph, text)
+    paragraph.gsub(text, "<strong>#{text}</strong>")
+  end
 end
 
 get "/" do
@@ -38,10 +42,15 @@ end
 get "/search" do
   @query = params[:query]
   @search_results = {}  
+  @paragraphs = []
   if params[:query]
     (1..@toc.length).to_a.each do |chapter_number|
       chapter = File.read("data/chp#{chapter_number}.txt")
-      @search_results[chapter_number] = @toc[chapter_number - 1] if chapter.include?(@query)
+      #@search_results[chapter_number] = @toc[chapter_number - 1] if chapter.include?(@query)
+      @paragraphs = chapter.split("\n\n")
+      @paragraphs.select! { |paragraph| paragraph.downcase.include?(@query.downcase) }
+      #@search_results[@toc[chapter_number - 1]] = @paragraphs unless @paragraphs.empty?
+      @search_results[chapter_number] = { @toc[chapter_number - 1] => @paragraphs } unless @paragraphs.empty?
     end
 
   end
