@@ -8,17 +8,25 @@
 <body>
 
   <div>
-    <h3>User info</h3>
+    <h3><%= "#{@name.to_s.capitalize}'s info" %></h3>
     <p>
       Email: <%= @info[:email] %>
     </p>
     <p>
-      <%= "#{@user.to_s}'s interests:" %>
+      Interests:
     </p>
-    <% interests = @info[:interests].each.join(', ') %>
-    <% interests = interests[0..-2] %>
-        <%= "#{interests}" %>
-    <% end %>
+    <% interests = @info[:interests].join(', ') %>
+    <% interests = interests[0..-1] %>
+    <%= "#{interests}" %>
   </div>
-  
+  <br><br>
+  <% @user_list.keys.each do |user| %>
+    <% next if user.to_s == @name %>
+    <a href="/users/<%= user %>">
+      <%= "#{user}" %>
+      <br>
+    </a>
+  <% end %>
+  <br>
+  <a href="/">[home]</a>
 </body>

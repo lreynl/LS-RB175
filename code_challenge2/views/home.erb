@@ -11,11 +11,15 @@
     <h3>List of users</h3>
     <% @users.each do |user| %>
       <a href="/users/<%= user %>">
-        <%= "#{user}" %>
+        <%= user %>
         <br>
       </a>
     <% end %>
   </div>
-
+  <br><br>
+  <div>
+    <% count = count_interests %>
+    There are <%= count["user_count"] %> users with <%= count["interest_count"] %> interests.
+  </div>
 </body>
   
