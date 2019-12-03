@@ -3,6 +3,8 @@ require 'tilt/erubis'
 require 'sinatra'
 require 'sinatra/reloader'
 
+set :bind, '0.0.0.0'
+
 helpers do
 
 end
@@ -14,4 +16,13 @@ get '/' do
   erb :home
 end
 
-get '/users/'
+get '/users/:user' do
+  redirect '/' unless params[:user]
+  @info = @user_list[:user]
+  @user = :user
+  erb :info
+end
+
+not_found do
+  redirect '/'
+end

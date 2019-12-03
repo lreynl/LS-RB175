@@ -1,0 +1,21 @@
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>List of users</title>
+</head>
+  
+<body>
+    
+  <div>
+    <h3>List of users</h3>
+    <% @users.each do |user| %>
+      <a href="/users/<%= user %>">
+        <%= "#{user}" %>
+        <br>
+      </a>
+    <% end %>
+  </div>
+
+</body>
+  

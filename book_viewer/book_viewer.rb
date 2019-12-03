@@ -46,10 +46,8 @@ get "/search" do
   if params[:query]
     (1..@toc.length).to_a.each do |chapter_number|
       chapter = File.read("data/chp#{chapter_number}.txt")
-      #@search_results[chapter_number] = @toc[chapter_number - 1] if chapter.include?(@query)
       @paragraphs = chapter.split("\n\n")
       @paragraphs.select! { |paragraph| paragraph.downcase.include?(@query.downcase) }
-      #@search_results[@toc[chapter_number - 1]] = @paragraphs unless @paragraphs.empty?
       @search_results[chapter_number] = { @toc[chapter_number - 1] => @paragraphs } unless @paragraphs.empty?
     end
 
