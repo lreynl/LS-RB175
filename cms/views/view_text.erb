@@ -1,0 +1,11 @@
+<div>
+  <% if File.extname(@name) == ".md" %>
+    <% @text = File.read(@name) %>
+    <%= render_markdown(@text) %>
+  <% else %>
+    <% @text = File.readlines(@name) %>
+    <% @text.each do |line| %>
+      <%= line %><br>
+    <% end %>
+  <% end %>
+<div>

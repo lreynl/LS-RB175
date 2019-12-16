@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <title>A simple CMS</title>
+    <meta charset="UTF-8">
+  </head>
+
+  <body>
+    <% if session[:not_found] %>
+      <p><%= session.delete(:not_found) %></p>
+    <% end %>
+     
+    <%= yield %>
+  </body>
+<html>
