@@ -1,0 +1,32 @@
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User info</title>
+</head>
+  
+<body>
+
+  <div>
+    <h3><%= "#{@name.to_s.capitalize}'s info" %></h3>
+    <p>
+      Email: <%= @info[:email] %>
+    </p>
+    <p>
+      Interests:
+    </p>
+    <% interests = @info[:interests].join(', ') %>
+    <% interests = interests[0..-1] %>
+    <%= "#{interests}" %>
+  </div>
+  <br><br>
+  <% @user_list.keys.each do |user| %>
+    <% next if user.to_s == @name %>
+    <a href="/users/<%= user %>">
+      <%= "#{user}" %>
+      <br>
+    </a>
+  <% end %>
+  <br>
+  <a href="/">[home]</a>
+</body>
