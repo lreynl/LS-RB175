@@ -47,4 +47,21 @@ class CMSTest < Minitest::Test
     assert_includes last_response.body, "<code>monospace</code>"
   end
 
+  def test_edit
+    get "/edit/about.txt"
+    assert_equal 200, last_response.status
+    assert_includes last_response.body, '<textarea name='
+  end
+
+  def test_update
+    post "/about.txt", content: "new content"
+    assert_equal 302, last_response.status
+    
+    get last_response["Location"]
+    assert_includes last_response.body, "about.txt was updated"
+
+    #get "/about.txt"
+    #assert_equal 200, last_response.status
+    #assert_includes last_response.body, "new content"
+  end
 end

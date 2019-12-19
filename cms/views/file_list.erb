@@ -1,6 +1,6 @@
 
 <ul>
   <% @files.each do |file| %>
-    <li><a href="/<%= file %>"><%= file %></a></li>
+    <li><a href="/<%= file %>"><%= file %></a><span>  </span><a href="/edit/<%= file %>">edit</a></li>
   <% end %>
 </ul>

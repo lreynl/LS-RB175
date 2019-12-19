@@ -21,12 +21,28 @@ end
 
 get "/:filename" do
   @name = "files/" + params[:filename]
-  #@text = ""
   if File.exist?(@name)
-    #@text = File.readlines(name)
     erb :view_text #, layout: :layout
   else
     session[:not_found] = "#{params[:filename]} not found."
     redirect "/"
   end
+end
+
+get "/edit/:filename" do
+  @filename = params[:filename]
+  @text = File.read("files/" + @filename)
+  erb :edit
+end
+
+post "/:filename" do
+  filename = params[:filename]
+  path = "files/" + filename
+  text = params[:text_box]
+  File.open(path, "w") { |file| 
+  file.puts(text) 
+  file.close
+  }
+  session[:success] = filename + " was updated."
+  redirect "/"
 end
