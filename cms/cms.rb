@@ -49,9 +49,10 @@ get "/edit/:filename" do
 end
 
 post "/:filename" do
-  filename = params[:filename] || params[:content]
+  filename = params[:filename]
+  
   path = File.join(files_path, filename)
-  text = params[:text_box]
+  text = params[:content] || params[:text_box]
   File.open(path, "w") do |file| 
     file.puts(text) 
     file.close

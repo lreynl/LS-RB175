@@ -82,9 +82,8 @@ class CMSTest < Minitest::Test
     get last_response["Location"]
       
     assert_includes last_response.body, "changes.txt was updated"
-      
     get "/changes.txt"
     assert_equal 200, last_response.status
-    assert_includes last_response.body, "new content"
+    assert_includes last_response.body, "new content"  
   end
 end
