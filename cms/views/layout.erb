@@ -2,16 +2,17 @@
 <html lang="en-US">
   <head>
     <title>A simple CMS</title>
+    <link rel="stylesheet" href="/cms.css" />
     <meta charset="UTF-8">
   </head>
 
   <body>
     <% if session[:not_found] %>
-      <p><%= session.delete(:not_found) %></p>
+      <p class="message"><%= session.delete(:not_found) %></p>
     <% end %>
 
     <% if session[:success] %>
-      <p><%= session.delete(:success) %></p>
+      <p class="message"><%= session.delete(:success) %></p>
     <% end %>
      
     <%= yield %>

@@ -22,22 +22,39 @@ def files_path
 end
 
 get "/" do
-  path = files_path + "*.*"
-  @files = Dir["./files/*.*"]
-  @files.map! { |file| file.split("/")[-1] }
-  erb :file_list#, layout: :layout
+  if session[:username] == "admin" && session[:password] == "secret"
+    @user = session[:username]
+    path = files_path + "*.*"
+    @files = Dir["./files/*.*"]
+    @files.map! { |file| file.split("/")[-1] }
+    erb :file_list#, layout: :layout
+  elsif session[:signedin] == false
+    session[:success] = "You have been signed out."
+    redirect "/users/signin"
+  else
+    session[:not_found] = "Username or password is invalid."
+    redirect "/users/signin"
+  end
+end
+
+get "/users/signin" do
+  erb :login
 end
 
 get "/:filename" do
-  #@name = "files/" + params[:filename]
-  #@name = File.join(files_path, params[:filename])
   @name = File.join(files_path, params[:filename])
   if File.exist?(@name)
-    erb :view_text #, layout: :layout
+    text = File.read(@name)
+    case File.extname(@name)
+    when ".txt"
+      headers["Content-Type"] = "text/plain"
+      text
+    when ".md"
+      erb render_markdown(text)
+    end
   else
     session[:not_found] = "#{params[:filename]} not found."
     redirect "/"
-    #erb @name
   end
 end
 
@@ -48,9 +65,43 @@ get "/edit/:filename" do
   erb :edit
 end
 
+get "/newfile/" do
+  erb :new_file
+end
+
+post "/users/signin" do
+  session[:username] = params[:username]
+  session[:password] = params[:password]
+  session[:signedin] = true
+  redirect "/"
+  #params.to_s
+end
+
+post "/logout/" do
+  session.delete(:username)
+  session.delete(:password)
+  session[:signedin] = false
+  redirect "/"
+end
+
+post "/createfile/" do
+  filename = params[:filename]
+  if filename.empty?
+    session[:error] = "A name is required."
+    redirect "/newfile/"
+  elsif File.extname(filename).empty?
+    session[:error] = "A file extension is required."
+    redirect "/newfile/"
+  else
+    path = File.join(files_path, filename)
+    File.open(path, "w") {}
+    session[:success] = filename + " was created."
+    redirect "/"
+  end
+end
+
 post "/:filename" do
   filename = params[:filename]
-  
   path = File.join(files_path, filename)
   text = params[:content] || params[:text_box]
   File.open(path, "w") do |file| 
@@ -58,5 +109,13 @@ post "/:filename" do
     file.close
   end
   session[:success] = filename + " was updated."
+  redirect "/"
+end
+
+post "/delete/" do
+  filename = params[:filename]
+  path = File.join(files_path, filename)
+  File.delete(path)
+  session[:success] = filename + " was deleted."
   redirect "/"
 end

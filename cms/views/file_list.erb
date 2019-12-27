@@ -1,5 +1,20 @@
 <ul>
   <% @files.each do |file| %>
-    <li><a href="/<%= file %>"><%= file %></a><span>  </span><a href="/edit/<%= file %>">edit</a></li>
+    <li>
+      <a href="/<%= file %>"><%= file %></a>
+      <span>  </span>
+      <a href="/edit/<%= file %>">edit</a>
+      <span>  </span>
+      <form style="display:inline; margin: 0; padding: 0;" action="/delete/<%= file %>" method="post">
+        <input type="submit" value="delete" />
+      </form>
+    </li>
   <% end %>
 </ul>
+<a href="/newfile/">New Document</a>
+
+<div class="user-status">Signed in as <%= @user %> 
+  <form style="display:inline;" action="/logout/" method="post">
+    <input type="submit" value="Sign out" />
+  </form>
+</div>
