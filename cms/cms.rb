@@ -3,6 +3,8 @@ require 'sinatra/reloader'
 require 'sinatra/content_for'
 require 'tilt/erubis'
 require "redcarpet"
+require "yaml"
+require 'bcrypt'
 
 enable :sessions
 
@@ -21,15 +23,36 @@ def files_path
   end
 end
 
+def valid?(user, pw)
+  users = YAML.load_file("users.txt")
+  users.key?(user) &&  BCrypt::Password.create(users[user]) == pw
+  #user == "admin" && pw == "secret"
+end
+
+def signed_in?
+  #session.key?(:username)
+  session[:username] && session[:password]
+end
+
+def must_be_signed_in
+  unless signed_in?
+    session[:message] = "You must be signed in to do that."
+    redirect "/"
+  end
+end
+
 get "/" do
-  if session[:username] == "admin" && session[:password] == "secret"
+  if signed_in?#session[:username] == "admin" && session[:password] == "secret"
     @user = session[:username]
     path = files_path + "*.*"
     @files = Dir["./files/*.*"]
     @files.map! { |file| file.split("/")[-1] }
     erb :file_list#, layout: :layout
-  elsif session[:signedin] == false
-    session[:success] = "You have been signed out."
+  elsif session[:message]
+    redirect "/users/signin"
+  elsif session[:signedout]
+    session.delete(:signedout)
+    session[:success] = "You have been signed out." 
     redirect "/users/signin"
   else
     session[:not_found] = "Username or password is invalid."
@@ -59,6 +82,8 @@ get "/:filename" do
 end
 
 get "/edit/:filename" do
+  must_be_signed_in
+  
   @filename = params[:filename]
   path = File.join(files_path, @filename)
   @text = File.read(path)
@@ -66,13 +91,20 @@ get "/edit/:filename" do
 end
 
 get "/newfile/" do
+  must_be_signed_in
   erb :new_file
 end
 
 post "/users/signin" do
-  session[:username] = params[:username]
-  session[:password] = params[:password]
-  session[:signedin] = true
+  username = params[:username]
+  password = params[:password]
+  if valid?(username, password)
+    session[:username] = username
+    session[:password] = password
+    session[:signedin] = "Welcome"
+  else
+    status 422
+  end
   redirect "/"
   #params.to_s
 end
@@ -80,11 +112,13 @@ end
 post "/logout/" do
   session.delete(:username)
   session.delete(:password)
-  session[:signedin] = false
+  session.delete(:signedin)
   redirect "/"
 end
 
 post "/createfile/" do
+  must_be_signed_in
+
   filename = params[:filename]
   if filename.empty?
     session[:error] = "A name is required."
@@ -101,6 +135,8 @@ post "/createfile/" do
 end
 
 post "/:filename" do
+  must_be_signed_in
+
   filename = params[:filename]
   path = File.join(files_path, filename)
   text = params[:content] || params[:text_box]
@@ -112,7 +148,9 @@ post "/:filename" do
   redirect "/"
 end
 
-post "/delete/" do
+post "/delete/:filename" do
+  must_be_signed_in
+
   filename = params[:filename]
   path = File.join(files_path, filename)
   File.delete(path)

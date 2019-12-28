@@ -14,6 +14,15 @@
     <% if session[:success] %>
       <p class="message"><%= session.delete(:success) %></p>
     <% end %>
+
+    <% if session[:message] %>
+      <p class="message"><%= session.delete(:message) %></p>
+    <% end %>
+
+    <% if session[:signedin] %>
+      <% session[:signedout] = true %>
+      <p class="message"><%= session.delete(:signedin) %></p>
+    <% end %>
      
     <%= yield %>
   </body>

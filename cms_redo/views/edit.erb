@@ -1,0 +1,14 @@
+<div>
+  <form action="/<%= @filename %>" method="post" id="textbox">
+    <div>
+      <label for="text_box">Enter content of <%= @filename %>:</label>
+    </div>
+    <textarea name="text_box" form="textbox" placeholder="Enter text here" type="text" rows="30" cols="100">
+      <%= @text %>
+    </textarea>
+    <div>
+      <input type="submit" value="Save">
+      <a href="/">Cancel</a>
+    </div>
+  </form>
+</div>

@@ -105,13 +105,13 @@ class CMSTest < Minitest::Test
   end
 
   def test_create_new_file
-    post "/createfile/", filename: "a_new_file.txt"
+    post "/createfile/test.txt"#, filename: "test.txt"
     assert_equal 302, last_response.status
 
-    assert_includes session[:success], "a_new_file.txt was created"
+    assert_includes session[:success], "test.txt was created"
 
     get "/"
-    assert_includes last_response.body, "a_new_file.txt"
+    assert_includes last_response.body, "test.txt"
   end
 
   def test_empty_extension
@@ -140,4 +140,72 @@ class CMSTest < Minitest::Test
     refute_includes last_response.body, "some_file.txt"
   end
 
+  def test_signin
+    post "/users/signin", username: "admin", password: "secret"
+    assert_equal 302, last_response.status
+    assert_equal "Welcome!", session[:message]
+    assert_equal "admin", session[:username]
+
+    get last_response["Location"]
+    assert_includes last_response.body, "Signed in as admin"
+  end
+
+
+
+  def test_signin_with_bad_credentials
+    post "/users/signin", username: "guest", password: "shhhh"
+    assert_equal 422, last_response.status
+    assert_nil session[:username]
+    assert_includes last_response.body, "is invalid"
+  end
+
+  def test_signout
+    get "/", {}, {"rack.session" => { username: "admin" } }
+    assert_includes last_response.body, "Signed in as admin"
+
+    post "/users/signout"
+    assert_equal "You have been signed out", session[:message]
+
+    get last_response["Location"]
+    assert_nil session[:username]
+    assert_includes last_response.body, "Sign In"
+  end
+
+  def test_editing_document_signed_out
+    create_document "changes.txt"
+
+    get "/changes.txt/edit"
+
+    assert_equal 302, last_response.status
+    assert_equal "You must be signed in to do that.", session[:message]
+  end
+
+  def test_updating_document_signed_out
+    post "/changes.txt", {content: "new content"}
+
+    assert_equal 302, last_response.status
+    assert_equal "You must be signed in to do that.", session[:message]
+  end
+
+  def test_view_new_document_form_signed_out
+    get "/newfile"
+
+    assert_equal 302, last_response.status
+    assert_equal "You must be signed in to do that.", session[:message]
+  end
+  
+  def test_create_new_document_signed_out
+    post "/create", {filename: "test.txt"}
+
+    assert_equal 302, last_response.status
+    assert_equal "You must be signed in to do that.", session[:message]
+  end
+  
+  def test_deleting_document_signed_out
+    create_document("test.txt")
+
+    post "/test.txt/delete"
+    assert_equal 302, last_response.status
+    assert_equal "You must be signed in to do that.", session[:message]
+  end
 end

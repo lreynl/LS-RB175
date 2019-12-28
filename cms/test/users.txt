@@ -1,0 +1,2 @@
+admin: '$2a$12$aAnMv/ktr9jNNB4sqpk1funnhnBw0a2MQ1Rqway0.bhLLCAGi9XD2'
+lr177245@gmail.com: '$2a$12$5v5C/R29krKKbowHZwETLes5F4aFTwWV077.S5orkJgfE7ipkMHmy'
