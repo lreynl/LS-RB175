@@ -4,6 +4,20 @@
       <a href="/files/<%= file %>"><%= file %>
       <span></span>
       <a href="/edit/<%= file %>">edit</a>
+      <span></span>
+      <form style="display:inline; margin: 0; padding: 0;" action="/delete/<%= file %>" method="post">
+        <input type="submit" value="delete" />
+      </form>    
     </li>
   <% end %>
 </ul>
+
+<br>
+
+<a href="/newfile" method="GET">New document</a>
+
+<div class="user-status">Signed in as <%= @user %> 
+  <form style="display:inline;" action="/signout/" method="post">
+    <input type="submit" value="Sign out" />
+  </form>
+</div>
